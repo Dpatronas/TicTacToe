@@ -12,17 +12,18 @@
 
 using namespace std;
 
-const int GridColumns = 3;
+const int GridColumns = 9;
 const int GridRows 	  = GridColumns;
 const int GridSize	  = GridColumns * GridRows;
 
-void printBoard( char gameGrid [GridRows][GridColumns] );
-void initializeBoard( char gameGrid [GridRows][GridColumns] );
-void getPlayerInput ( char gameGrid [GridRows][GridColumns] , char currentPlayer );
-bool winCondition ( char gameGrid [GridRows][GridColumns] );
-char getNextPlayer (char currentPlayer);
-bool playAgainCheck();
 void play();
+bool winCondition ( int grid[GridRows][GridColumns] );
+void initializeBoard( int grid [GridRows][GridColumns] );
+void printBoard( int grid [GridRows][GridColumns] );
+void getPlayerInput ( int grid [GridRows][GridColumns] , int currentPlayer );
+char getNextPlayer (int currentPlayer);
+string symbolLookup(int symbolIndex);
+bool playAgainCheck ();
 
 int main() {
 
@@ -40,8 +41,8 @@ int main() {
 
 void play()
 {
-	char gameGrid[GridRows][GridColumns];
-	char currentPlayer = 'X';
+	int gameGrid[GridRows][GridColumns];
+	int currentPlayer = 1;
 	int index = 0;
 	bool win = false;
 
@@ -55,7 +56,7 @@ void play()
 
 		win = winCondition ( gameGrid );
 		if ( win == true ) {
-			cout << currentPlayer << " has won the game!" << endl;
+			cout << symbolLookup(currentPlayer) << " has won the game!" << endl;
 			break;
 		}
 
@@ -68,55 +69,74 @@ void play()
 	}
 }
 
-bool winCondition ( char grid[3][3] ) {
+bool winCondition ( int grid[GridRows][GridColumns] ) {
 
 	// row, column check
 	for(int i = 0; i < 3; i++)
 	{
-		if( grid[i][0] == grid[i][1] && grid[i][1] == grid[i][2] )
+		if( grid[i][0] != 0 && grid[i][0] == grid[i][1] && grid[i][1] == grid[i][2] )
 		{
 			return true;
 		}
 
-		if( grid[0][i] == grid[1][i] && grid[1][i] == grid[2][i] )
+		if( grid[0][i] != 0 && grid[0][i] == grid[1][i] && grid[1][i] == grid[2][i] )
 		{
 			return true;
 		}
 	}
 
 	// diagonal check
-	if ( grid[0][0] == grid[1][1] && grid[1][1] == grid[2][2] )
+	if ( grid[0][0] != 0 && grid[0][0] == grid[1][1] && grid[1][1] == grid[2][2] )
 		return true;
 
 	// diagnoal check
-	if ( grid[0][2] == grid[1][1] && grid[1][1] == grid[2][0] )
+	if ( grid[0][2] != 0 && grid[0][2] == grid[1][1] && grid[1][1] == grid[2][0] )
 		return true;
 
 	// no winnner
 	return false;
 }
 
-void initializeBoard( char gameGrid [GridRows][GridColumns] )
-{
-	
-}
-
-void printBoard( char grid [GridRows][GridColumns] ) {
+void initializeBoard( int grid [GridRows][GridColumns] ) {
 	for (int r = 0; r < GridRows; r++) { 
 	  for (int c = 0; c < GridColumns; c++) { 
-		cout << grid[r][c] << " " ;
+		grid[r][c] = 0;
 	  }
-		cout << endl;
 	}
 }
 
+void printBoard( int grid [GridRows][GridColumns] ) {
+	for (int r = 0; r < GridRows; r++) {
+	  for (int c = 0; c < GridColumns; c++) {
+
+	  	//if(grid[r][c] != 0)
+	  	{
+	  		cout << symbolLookup(grid[r][c]) << " " ;
+	  	}
+	  	// else
+	  	// {
+	  	// 	cout << ( r * GridColumns + c + 1);
+	  	// }
+
+		if(c != GridColumns - 1)
+		{
+			cout << " | ";
+		}
+
+	  }
+		cout << endl;
+	}
+
+	cout << endl;
+}
+
 //player turn
-void getPlayerInput ( char grid [GridRows][GridColumns] , char currentPlayer ) {
+void getPlayerInput ( int grid [GridRows][GridColumns] , int currentPlayer ) {
 	int location;
 
 	while (1)
 	{
-		cout << "Player " << currentPlayer << ": Please indicate the number of your tile on the grid to put your mark: ";
+		cout << "Player " << symbolLookup(currentPlayer) << ": Please indicate the number of your tile on the grid to put your mark: ";
 		cin >> location;
 
 		if( location < 1 || location > GridSize )
@@ -132,7 +152,7 @@ void getPlayerInput ( char grid [GridRows][GridColumns] , char currentPlayer ) {
 		int row = location / GridColumns;
 		int col = location - row * GridColumns;
 
-		if( grid[row][col] == 'X' || grid[row][col] == 'O' )
+		if( grid[row][col] != 0 )
 		{
 			cout << "Location is occupied, please choose another one" << endl;
 			continue;
@@ -143,14 +163,30 @@ void getPlayerInput ( char grid [GridRows][GridColumns] , char currentPlayer ) {
 	}
 }
 
-char getNextPlayer (char currentPlayer) {
-	if (currentPlayer == 'X')
+char getNextPlayer (int currentPlayer) {
+	if (currentPlayer == 1)
 	{
-		return 'O';
+		return 2;
 	}
 	else 
 	{
-		return 'X';
+		return 1;
+	}
+}
+
+string symbolLookup(int symbolIndex)
+{
+	if(symbolIndex == 0)
+	{
+		return " ";
+	}
+	else if(symbolIndex == 1)
+	{
+		return "X";
+	}
+	else
+	{
+		return "O";
 	}
 }
 
